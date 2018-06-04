@@ -1,6 +1,6 @@
 # n-pendulum
 
-An n-pendulum MATLAB GUI for Computation Physics class GUI project assignment.
+An n-pendulum MATLAB GUI for computational physics class GUI project assignment.
 
 ![preview](preview.png)
 
@@ -10,7 +10,7 @@ An n-pendulum MATLAB GUI for Computation Physics class GUI project assignment.
 -   Gravity constant (g)
 -   Segment length (l)
 -   Initial angle (theta)
--   Time (t)
+-   Time elapsed (t)
 
 ### Output
 
