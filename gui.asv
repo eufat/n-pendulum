@@ -2,11 +2,12 @@ clear all
 close
 clc
 
-% Input variables
-n = 4; % n-pendulum
 
-g = 9.81; % Gravitational constants
-l = 30; % Segment length
+%=============INPUT  VARIABEL==============%
+n = 3; % N-PENDULUM
+
+g = 10; % GRAVITATIONAL CONSTANTS
+l = 2; % PENDULUM LENGTH-SEGMENT
 
 t = 20; % TIME
 % Extract Constants
@@ -50,17 +51,17 @@ end;
 
 
 % Set duration, fps and t with linear spacing
-duration = 20;
+duration = 200;
 fps = 10;
 nframes=duration*fps;
-time = linspace(0,duration,nframes);
+t = linspace(0,duration,nframes);
 
 % Get r as row size, n as pendulum amount.
 [r, n] = size(thetas);
 
 % Set plot with marker and rope.
 h=plot(0,0,'MarkerSize',30,'Marker','.','LineWidth',n);
-range=(l*n); 
+range=2*(l*n); 
 axis([-range range -range range]); 
 axis square;
 
