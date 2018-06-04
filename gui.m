@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 04-Jun-2018 15:33:54
+% Last Modified by GUIDE v2.5 04-Jun-2018 22:38:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -94,6 +94,8 @@ function pendulumamount_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to pendulumamount (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+handles.metricdata.n = str2double(get(hObject, 'String'));
+guidata(hObject,handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -124,6 +126,8 @@ function gravity_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to gravity (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+handles.metricdata.g = str2double(get(hObject, 'String'));
+guidata(hObject,handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -154,6 +158,8 @@ function segmentlength_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to segmentlength (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+handles.metricdata.l = str2double(get(hObject, 'String'));
+guidata(hObject,handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -184,6 +190,8 @@ function initialangle_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to initialangle (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+handles.metricdata.theta_init = str2double(get(hObject, 'String'));
+guidata(hObject,handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -214,6 +222,8 @@ function time_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to time (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+handles.metricdata.t = str2double(get(hObject, 'String'));
+guidata(hObject,handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -235,26 +245,30 @@ n = handles.metricdata.n; % n-pendulum
 g = handles.metricdata.g; % Gravitational constants
 l = handles.metricdata.l; % Segment length
 theta_init = handles.metricdata.theta_init; % Initial theta
-t = handles.metricdata.t; % TIME
+t = handles.metricdata.t; % TIMEas
 
+% Extract Constants
 for i = 1:n
-    for j = 1:n
-        a(i,j) = (n-max(i,j)+1);
-    end
-    b(i,1) = -(n-i+1)*g/l;
+  for j = 1:n
+    a(i,j) = (n-max(i,j)+1);
+  end
+  b(i,1) = -(n-i+1)*g/l;
 end
 
 c = inv(a);
 
 for i = 1:n
-    for j = 1:n
-        const(i,j) = c(i,j)*b(j,1);
-    end
+  for j = 1:n
+const(i,j) = c(i,j)*b(j,1);
+  end
+end
+
+for x = 1:n
+    k(x) = theta_init;
 end
 
 % Initial value
 for i = 2:2*n-1
-    k(1) = theta_init;
     if i <= n
         k(i+1) = 0; % Initial value theta
     else
@@ -264,7 +278,7 @@ end
 
 for i = 1:2*n
     init(i,1) = k(i);
-end
+end     
 
 % ODE45 Solver
 f = @(t,x) theta(n,x,const);
@@ -277,7 +291,7 @@ end;
 
 
 % Set duration, fps and t with linear spacing
-duration = t;
+duration = 20;
 fps = 10;
 nframes=duration*fps;
 time = linspace(0,duration,nframes);
@@ -285,40 +299,50 @@ time = linspace(0,duration,nframes);
 % Get r as row size, n as pendulum amount.
 [r, n] = size(thetas);
 
-% Set plot with marker and rope.
+% Set frequency plot
+axes(handles.freqaxes);
+plot(t,thetas(:,:))
+xlabel('time(s)')
+ylabel('rad')
+
+for k = 1:n
+    tet{k} = sprintf('thetas %d', k);
+end;
+legend(tet)
+
+% Set pendulum plot with marker and rope.
+axes(handles.pendulumaxes);
 h=plot(0,0,'MarkerSize',30,'Marker','.','LineWidth',n);
-range=(l*n);
-axis([-range range -range range]);
+range=(l*n); 
+axis([-range range -range range]); 
 axis square;
 
 % Set new current axes nextplot to be replaced.
 set(gca,'nextplot','replacechildren');
 
-while start_flag == start_flag;
-    for row=1:r-1
-        if (ishandle(h)==1) % If chart object
-            current_x = 0;
-            current_y = 0;
-            x_coord = [];
-            y_coord = [];
-
-            for j=1:n
-                % Push to array
-                x_coord = [x_coord, current_x];
-                y_coord = [y_coord, current_y];
-
-                % Set current pendulum x and y point
-                current_x = l * sum(sin(thetas(row,1:j)));
-                current_y = -1 * l * sum(cos(thetas(row,1:j)));
-            end
-
-            % Draw x and y coordinates
-            set(h,'XData',x_coord,'YData',y_coord);
-            drawnow;
-
-            % Pause every delta t
-            pause(t(i+1)-t(i));
+for row=1:r-1
+    if (ishandle(h)==1) % If chart object
+        current_x = 0;
+        current_y = 0;
+        x_coord = [];
+        y_coord = [];
+        
+        for j=1:n
+            % Push to array
+            x_coord = [x_coord, current_x];
+            y_coord = [y_coord, current_y];
+            
+            % Set current pendulum x and y point
+            current_x = l * sum(sin(thetas(row,1:j)));
+            current_y = -1 * l * sum(cos(thetas(row,1:j)));
         end
+        
+        % Draw x and y coordinates
+        set(h,'XData',x_coord,'YData',y_coord);
+        drawnow;
+        
+        % Pause every delta t
+        pause(t(i+1)-t(i));
     end
 end
 % --- Executes on button press in stop.
