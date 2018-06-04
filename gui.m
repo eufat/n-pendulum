@@ -57,7 +57,7 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
-initialize_gui(hObject, handles, false);
+%initialize_gui(hObject, handles, false);
 % UIWAIT makes gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
