@@ -2,13 +2,12 @@ clear all
 close
 clc
 
+% Input variables
+n = 4; % n-pendulum
 
-%=============INPUT  VARIABEL==============%
-n = 3; % N-PENDULUM
-
-g = 10; % GRAVITATIONAL CONSTANTS
-l = 2; % PENDULUM LENGTH-SEGMENT
-
+g = 9.81; % Gravitational constants
+l = 30; % Segment length
+theta_init = 0; % Initial theta
 t = 20; % TIME
 % Extract Constants
 for i = 1:n
@@ -28,7 +27,7 @@ end
 
 % Initial value
 for i = 2:2*n-1
-    k(1) = 0.5;
+    k(1) = theta_init;
     if i <= n
         k(i+1) = 0; % Initial value theta
     else
@@ -51,18 +50,18 @@ end;
 
 
 % Set duration, fps and t with linear spacing
-duration = 200;
+duration = t;
 fps = 10;
 nframes=duration*fps;
-t = linspace(0,duration,nframes);
+time = linspace(0,duration,nframes);
 
 % Get r as row size, n as pendulum amount.
 [r, n] = size(thetas);
 
 % Set plot with marker and rope.
 h=plot(0,0,'MarkerSize',30,'Marker','.','LineWidth',n);
-range=2*(l*n); 
-axis([-range range -range range]); 
+range=(l*n);
+axis([-range range -range range]);
 axis square;
 
 % Set new current axes nextplot to be replaced.
@@ -74,21 +73,21 @@ for row=1:r-1
         current_y = 0;
         x_coord = [];
         y_coord = [];
-        
+
         for j=1:n
             % Push to array
             x_coord = [x_coord, current_x];
             y_coord = [y_coord, current_y];
-            
+
             % Set current pendulum x and y point
             current_x = l * sum(sin(thetas(row,1:j)));
             current_y = -1 * l * sum(cos(thetas(row,1:j)));
         end
-        
+
         % Draw x and y coordinates
         set(h,'XData',x_coord,'YData',y_coord);
         drawnow;
-        
+
         % Pause every delta t
         pause(t(i+1)-t(i));
     end
