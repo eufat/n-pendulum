@@ -19,5 +19,9 @@ An n-pendulum MATLAB GUI for Computation Physics class GUI project assignment.
 
 ### References
 
+-   Simplified analytical calculations by Gaffar ([Link to paper](projekgui.pdf))
 -   Small Oscillations of the n-Pendulum and the “Hanging Rope” Limit n → ∞ ([Link to paper](http://www.pas.rochester.edu/~rrubenza/projects/RR_PHY235W_TermPaper.pdf))
--   Simplified analytical calculations by Gaffar
+
+### Credits
+
+by Gaffar, Dedy, Eufrat and Bene.
