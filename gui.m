@@ -308,7 +308,7 @@ legend(tet)
 
 % Set pendulum plot with marker and rope.
 axes(handles.pendulumaxes);
-h=plot(0,0,'MarkerSize',30,'Marker','.','LineWidth',n);
+h=plot(0,0,'MarkerSize',20,'Marker','.','LineWidth',1);
 range=(l*n); 
 axis([-range range -range range]); 
 axis square;
