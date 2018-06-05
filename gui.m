@@ -263,22 +263,18 @@ const(i,j) = c(i,j)*b(j,1);
   end
 end
 
-for x = 1:n
-    k(x) = theta_init;
-end
-
 % Initial value
-for i = 2:2*n-1
+for i = 1:2*n
     if i <= n
-        k(i+1) = 0; % Initial value theta
+        k(i) = theta_init; % Initial value theta
     else
-        k(i+1) = 0; % Initial value theta dot
+        k(i) = 0; % Initial value theta dot
     end
 end
 
 for i = 1:2*n
     init(i,1) = k(i);
-end     
+end
 
 % ODE45 Solver
 f = @(t,x) theta(n,x,const);
@@ -320,27 +316,26 @@ axis square;
 % Set new current axes nextplot to be replaced.
 set(gca,'nextplot','replacechildren');
 
+
 for row=1:r-1
     if (ishandle(h)==1) % If chart object
         current_x = 0;
         current_y = 0;
-        x_coord = [];
-        y_coord = [];
-        
+        x_coord = [current_x];
+        y_coord = [current_y];
+
         for j=1:n
-            % Push to array
-            x_coord = [x_coord, current_x];
-            y_coord = [y_coord, current_y];
-            
             % Set current pendulum x and y point
             current_x = l * sum(sin(thetas(row,1:j)));
             current_y = -1 * l * sum(cos(thetas(row,1:j)));
+
+            % Push to array
+            x_coord = [x_coord, current_x];
+            y_coord = [y_coord, current_y];
         end
-        
         % Draw x and y coordinates
         set(h,'XData',x_coord,'YData',y_coord);
         drawnow;
-        
         % Pause every delta t
         pause(t(i+1)-t(i));
     end
